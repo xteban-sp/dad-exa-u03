@@ -1,0 +1,57 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ms-gestion-taller
+  datasource:
+    url: jdbc:postgresql://localhost:5435/tallerdb
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true   # Envuelve cada llamada Feign con un Circuit Breaker
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: localhost:${spring.application.name}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+# Configuracion del Circuit Breaker (Resilience4j)
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        sliding-window-type: COUNT_BASED
+        sliding-window-size: 6                 # ventana de 6 llamadas
+        minimum-number-of-calls: 4             # minimo de llamadas para evaluar
+        failure-rate-threshold: 50             # 50% de fallos abre el circuito
+        wait-duration-in-open-state: 10s       # tiempo abierto antes de probar
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        # Un 404 (recurso inexistente) NO debe contar como fallo del circuito;
+        # solo cuentan caidas/timeouts del servicio.
+        ignore-exceptions:
+          - feign.FeignException$NotFound
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,circuitbreakers
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true

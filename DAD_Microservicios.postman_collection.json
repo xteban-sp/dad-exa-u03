@@ -1,0 +1,435 @@
+{
+  "info": {
+    "name": "DAD - Microservicios (UPeU)",
+    "description": "Coleccion de pruebas del proyecto integrador de Desarrollo de Aplicaciones Distribuidas.\nCubre: Infra/Health, Fase 3 (REST directo), Fase 4 (via API Gateway) y Fase 5 (comunicacion Feign / endpoints compuestos).\n\nVariables (ver pestana Variables): host, portConfig, portEureka, portGateway, portInstructor, portAlumno, portTaller.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "host", "value": "localhost" },
+    { "key": "portConfig", "value": "8888" },
+    { "key": "portEureka", "value": "8761" },
+    { "key": "portGateway", "value": "8080" },
+    { "key": "portInstructor", "value": "8081" },
+    { "key": "portAlumno", "value": "8082" },
+    { "key": "portTaller", "value": "8083" },
+    { "key": "instructorId", "value": "1" },
+    { "key": "alumnoId", "value": "1" },
+    { "key": "tallerId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "00 - Infra y Health",
+      "item": [
+        {
+          "name": "Config Server - config de instructor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portConfig}}/ms-gestion-instructor/dev",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portConfig}}",
+              "path": ["ms-gestion-instructor", "dev"]
+            },
+            "description": "Debe devolver la config centralizada (datasource, puerto, eureka)."
+          }
+        },
+        {
+          "name": "Config Server - config de gateway",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portConfig}}/ms-admin-api-gateway/dev",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portConfig}}",
+              "path": ["ms-admin-api-gateway", "dev"]
+            },
+            "description": "Debe mostrar las routes del gateway."
+          }
+        },
+        {
+          "name": "Eureka - apps registradas (JSON)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }],
+            "url": {
+              "raw": "http://{{host}}:{{portEureka}}/eureka/apps",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portEureka}}",
+              "path": ["eureka", "apps"]
+            },
+            "description": "Lista los microservicios registrados en Eureka."
+          }
+        },
+        {
+          "name": "Gateway - rutas configuradas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/actuator/gateway/routes",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["actuator", "gateway", "routes"]
+            },
+            "description": "Debe listar las 3 rutas lb:// (instructor, alumno, taller)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fase 3 - REST directo",
+      "item": [
+        {
+          "name": "Instructor - Crear (POST)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dni\": \"70123456\",\n  \"nombres\": \"Benjamin\",\n  \"apellidos\": \"Reyna Barreto\",\n  \"especialidad\": \"Aplicaciones Distribuidas\",\n  \"email\": \"benjamin.reyna@upeu.edu.pe\"\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portInstructor}}/api/instructores",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portInstructor}}",
+              "path": ["api", "instructores"]
+            }
+          }
+        },
+        {
+          "name": "Instructor - Listar (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portInstructor}}/api/instructores",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portInstructor}}",
+              "path": ["api", "instructores"]
+            }
+          }
+        },
+        {
+          "name": "Instructor - Obtener por id (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portInstructor}}/api/instructores/{{instructorId}}",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portInstructor}}",
+              "path": ["api", "instructores", "{{instructorId}}"]
+            }
+          }
+        },
+        {
+          "name": "Instructor - Actualizar (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dni\": \"70123456\",\n  \"nombres\": \"Benjamin David\",\n  \"apellidos\": \"Reyna Barreto\",\n  \"especialidad\": \"Microservicios\",\n  \"email\": \"benjamin.reyna@upeu.edu.pe\",\n  \"estado\": true\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portInstructor}}/api/instructores/{{instructorId}}",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portInstructor}}",
+              "path": ["api", "instructores", "{{instructorId}}"]
+            }
+          }
+        },
+        {
+          "name": "Instructor - Eliminar (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portInstructor}}/api/instructores/{{instructorId}}",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portInstructor}}",
+              "path": ["api", "instructores", "{{instructorId}}"]
+            }
+          }
+        },
+        {
+          "name": "Alumno - Crear (POST)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"202410001\",\n  \"nombres\": \"Fernando\",\n  \"apellidos\": \"Esteban\",\n  \"email\": \"fernando.esteban@upeu.edu.pe\",\n  \"ciclo\": 5\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portAlumno}}/api/alumnos",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portAlumno}}",
+              "path": ["api", "alumnos"]
+            }
+          }
+        },
+        {
+          "name": "Alumno - Listar (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portAlumno}}/api/alumnos",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portAlumno}}",
+              "path": ["api", "alumnos"]
+            }
+          }
+        },
+        {
+          "name": "Taller - Crear (POST)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"TALL-001\",\n  \"nombre\": \"Microservicios con Spring Cloud\",\n  \"descripcion\": \"Taller practico de arquitectura distribuida\",\n  \"cupoMaximo\": 30\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portTaller}}/api/talleres",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portTaller}}",
+              "path": ["api", "talleres"]
+            }
+          }
+        },
+        {
+          "name": "Taller - Listar (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portTaller}}/api/talleres",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portTaller}}",
+              "path": ["api", "talleres"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fase 3 - Casos de error (evidencia)",
+      "item": [
+        {
+          "name": "Instructor - DNI invalido (400)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dni\": \"123\",\n  \"nombres\": \"Test\",\n  \"apellidos\": \"Error\",\n  \"especialidad\": \"X\",\n  \"email\": \"correo-invalido\"\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portInstructor}}/api/instructores",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portInstructor}}",
+              "path": ["api", "instructores"]
+            },
+            "description": "Debe devolver 400 con validationErrors."
+          }
+        },
+        {
+          "name": "Instructor - No encontrado (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portInstructor}}/api/instructores/999",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portInstructor}}",
+              "path": ["api", "instructores", "999"]
+            },
+            "description": "Debe devolver 404 NOT_FOUND con cuerpo ApiError."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fase 4 - Via API Gateway (8080)",
+      "item": [
+        {
+          "name": "GW Instructor - Crear (POST)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dni\": \"71222333\",\n  \"nombres\": \"Maria\",\n  \"apellidos\": \"Lopez\",\n  \"especialidad\": \"Cloud\",\n  \"email\": \"maria.lopez@upeu.edu.pe\"\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/instructores",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "instructores"]
+            }
+          }
+        },
+        {
+          "name": "GW Instructor - Listar (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/instructores",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "instructores"]
+            }
+          }
+        },
+        {
+          "name": "GW Alumno - Listar (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/alumnos",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "alumnos"]
+            }
+          }
+        },
+        {
+          "name": "GW Taller - Listar (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/talleres",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "talleres"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fase 5 - Comunicacion Feign (via Gateway)",
+      "item": [
+        {
+          "name": "Asignar instructor a taller (POST)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/talleres/{{tallerId}}/asignar-instructor/{{instructorId}}",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "talleres", "{{tallerId}}", "asignar-instructor", "{{instructorId}}"]
+            },
+            "description": "El taller valida via Feign que el instructor exista y lo asigna."
+          }
+        },
+        {
+          "name": "Inscribir alumno en taller (POST)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/talleres/{{tallerId}}/inscribir-alumno/{{alumnoId}}",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "talleres", "{{tallerId}}", "inscribir-alumno", "{{alumnoId}}"]
+            },
+            "description": "Valida cupo y que el alumno exista via Feign; crea la inscripcion."
+          }
+        },
+        {
+          "name": "Detalle completo del taller (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/talleres/{{tallerId}}/detalle-completo",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "talleres", "{{tallerId}}", "detalle-completo"]
+            },
+            "description": "Devuelve el taller + datos del instructor + alumnos inscritos (traidos via Feign)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fase 7 - Balanceo de carga",
+      "item": [
+        {
+          "name": "Whoami via Gateway (round-robin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/instructores/whoami",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "instructores", "whoami"]
+            },
+            "description": "Llama repetidamente: el 'puerto' debe alternar entre 8081 y 8091 (round-robin entre las 2 instancias)."
+          }
+        },
+        {
+          "name": "Whoami instancia 1 (directo 8081)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:8081/api/instructores/whoami",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "8081",
+              "path": ["api", "instructores", "whoami"]
+            }
+          }
+        },
+        {
+          "name": "Whoami instancia 2 (directo 8091)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:8091/api/instructores/whoami",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "8091",
+              "path": ["api", "instructores", "whoami"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
