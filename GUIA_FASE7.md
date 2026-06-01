@@ -14,8 +14,8 @@ El puerto del instructor (8081) viene del Config Server. Para una 2ª instancia 
 **lo sobreescribimos por línea de comando** (tiene mayor prioridad que el Config Server).
 
 1. Menú **Run → Edit Configurations...**
-2. Selecciona la configuración de `MsGestionInstructorApplication` y pulsa **Copy Configuration** (icono de copiar).
-3. Renómbrala a `MsGestionInstructorApplication (8091)`.
+2. Selecciona la configuración de `MsIstanaGestionInstructorApplication` y pulsa **Copy Configuration** (icono de copiar).
+3. Renómbrala a `MsIstanaGestionInstructorApplication (8091)`.
 4. En **Program arguments** escribe:
    ```
    --server.port=8091
@@ -24,7 +24,7 @@ El puerto del instructor (8081) viene del Config Server. Para una 2ª instancia 
 5. Aceptar.
 
 > El `instance-id` ya usa `${server.port}`, así que la 2ª instancia se registra como
-> `localhost:ms-gestion-instructor:8091`, distinta de la de 8081.
+> `localhost:ms-istana-gestion-instructor:8091`, distinta de la de 8081.
 
 ## 2) Arrancar
 1. Config Server (8888) → Eureka (8761).
@@ -32,7 +32,7 @@ El puerto del instructor (8081) viene del Config Server. Para una 2ª instancia 
 3. Arranca la instancia copiada (8091).
 4. Arranca alumno, taller y gateway.
 
-En `http://localhost:8761`, bajo **MS-GESTION-INSTRUCTOR** deben aparecer **2 instancias**
+En `http://localhost:8761`, bajo **MS-ISTANA-GESTION-INSTRUCTOR** deben aparecer **2 instancias**
 (`...:8081` y `...:8091`).
 
 ## 3) Ver el balanceo (round-robin)
@@ -43,7 +43,7 @@ GET http://localhost:8080/api/instructores/whoami
 ```
 La respuesta debe **alternar** el puerto en cada llamada:
 ```json
-{ "servicio": "ms-gestion-instructor", "puerto": "8081", "instancia": "ms-gestion-instructor:8081" }
+{ "servicio": "ms-istana-gestion-instructor", "puerto": "8081", "instancia": "ms-istana-gestion-instructor:8081" }
 ```
 luego `8091`, luego `8081`, ... → eso es el round-robin.
 

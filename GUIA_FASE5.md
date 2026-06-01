@@ -1,7 +1,7 @@
 # Guía de verificación — Fase 5 (Comunicación entre microservicios con OpenFeign)
 
 ## ¿Qué se logró?
-El `ms-gestion-taller` ahora **llama a los otros microservicios** (instructor y alumno)
+El `ms-istana-gestion-taller` ahora **llama a los otros microservicios** (instructor y alumno)
 usando **OpenFeign**, resolviéndolos por su nombre en Eureka (`lb://`, con balanceo).
 Se agregó la entidad `Inscripcion` (taller ↔ alumno) y tres endpoints compuestos:
 
@@ -13,14 +13,14 @@ GET  /api/talleres/{idTaller}/detalle-completo
 
 ## 1) Recompila el taller
 Se añadió la dependencia `spring-cloud-starter-openfeign` y clases nuevas.
-Haz *Reload* del proyecto Maven en IntelliJ para el módulo `ms-gestion-taller`.
+Haz *Reload* del proyecto Maven en IntelliJ para el módulo `ms-istana-gestion-taller`.
 
 ## 2) Arranca TODO (orden importante)
 1. Config Server (8888)
 2. Registry / Eureka (8761)
-3. ms-gestion-instructor (8081)
-4. ms-gestion-alumno (8082)
-5. ms-gestion-taller (8083)
+3. ms-istana-gestion-instructor (8081)
+4. ms-istana-gestion-alumno (8082)
+5. ms-istana-gestion-taller (8083)
 6. API Gateway (8080)
 
 > Feign necesita que **instructor y alumno estén registrados en Eureka** para poder llamarlos.
@@ -63,7 +63,7 @@ todos traídos en tiempo real desde sus microservicios vía Feign. Ejemplo:
 - Asignar instructor inexistente: `.../asignar-instructor/999` → **404** (Feign no lo encuentra).
 - Inscribir el mismo alumno dos veces → **409** (ya inscrito).
 - Inscribir cuando el cupo está lleno → **409** (sin cupo).
-- **Apaga ms-gestion-alumno** y haz `inscribir-alumno` → **503 SERVICE_UNAVAILABLE**
+- **Apaga ms-istana-gestion-alumno** y haz `inscribir-alumno` → **503 SERVICE_UNAVAILABLE**
   (el taller no puede comunicarse con el ms de alumnos). En la **Fase 6** esto se vuelve
   resiliente con Circuit Breaker y un *fallback* en vez de fallar.
 

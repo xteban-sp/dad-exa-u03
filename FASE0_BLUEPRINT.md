@@ -18,12 +18,12 @@ Esta fase no implementa logica completa de negocio; deja listo el contrato tecni
 
 ```
 microservices-arquitectura-capas/
-  ms-admin-config-server/
-  ms-admin-registry-server/
-  ms-admin-api-gateway/
-  ms-gestion-instructor/
-  ms-gestion-alumno/
-  ms-gestion-taller/
+  ms-istana-config-server/
+  ms-istana-registry-server/
+  ms-istana-api-gateway/
+  ms-istana-gestion-instructor/
+  ms-istana-gestion-alumno/
+  ms-istana-gestion-taller/
   docker-compose.yml
   README.md
 ```
@@ -43,12 +43,12 @@ microservices-arquitectura-capas/
 
 ## 4) Servicios y puertos
 
-- `ms-admin-config-server`: `:8888`
-- `ms-admin-registry-server` (Eureka): `:8761`
-- `ms-admin-api-gateway`: `:8080`
-- `ms-gestion-instructor`: `:8081`
-- `ms-gestion-alumno`: `:8082`
-- `ms-gestion-taller`: `:8083`
+- `ms-istana-config-server`: `:8888`
+- `ms-istana-registry-server` (Eureka): `:8761`
+- `ms-istana-api-gateway`: `:8080`
+- `ms-istana-gestion-instructor`: `:8081`
+- `ms-istana-gestion-alumno`: `:8082`
+- `ms-istana-gestion-taller`: `:8083`
 
 Base de datos sugerida (PostgreSQL, una por servicio):
 
@@ -60,12 +60,12 @@ Base de datos sugerida (PostgreSQL, una por servicio):
 
 ## 5) Nombres de aplicaciones (spring.application.name)
 
-- `ms-admin-config-server`
-- `ms-admin-registry-server`
-- `ms-admin-api-gateway`
-- `ms-gestion-instructor`
-- `ms-gestion-alumno`
-- `ms-gestion-taller`
+- `ms-istana-config-server`
+- `ms-istana-registry-server`
+- `ms-istana-api-gateway`
+- `ms-istana-gestion-instructor`
+- `ms-istana-gestion-alumno`
+- `ms-istana-gestion-taller`
 
 ---
 
@@ -100,17 +100,17 @@ Reglas:
 
 ## 7) Dependencias por servicio
 
-### 7.1 ms-admin-config-server
+### 7.1 ms-istana-config-server
 
 - `spring-cloud-config-server`
 - `spring-boot-starter-actuator`
 
-### 7.2 ms-admin-registry-server
+### 7.2 ms-istana-registry-server
 
 - `spring-cloud-starter-netflix-eureka-server`
 - `spring-boot-starter-actuator`
 
-### 7.3 ms-admin-api-gateway
+### 7.3 ms-istana-api-gateway
 
 - `spring-cloud-starter-gateway`
 - `spring-cloud-starter-netflix-eureka-client`
@@ -119,7 +119,7 @@ Reglas:
 - (U2) `spring-boot-starter-security`
 - (U2) JWT library (`jjwt`)
 
-### 7.4 ms-gestion-instructor y ms-gestion-alumno
+### 7.4 ms-istana-gestion-instructor y ms-istana-gestion-alumno
 
 - `spring-boot-starter-web`
 - `spring-boot-starter-validation`
@@ -130,7 +130,7 @@ Reglas:
 - `springdoc-openapi-starter-webmvc-ui`
 - Driver PostgreSQL
 
-### 7.5 ms-gestion-taller (compuesto)
+### 7.5 ms-istana-gestion-taller (compuesto)
 
 - `spring-boot-starter-web`
 - `spring-boot-starter-validation`
@@ -147,7 +147,7 @@ Reglas:
 
 ## 8) Contratos API base (primera version)
 
-### 8.1 ms-gestion-instructor
+### 8.1 ms-istana-gestion-instructor
 
 Base path: `/api/instructores`
 
@@ -157,7 +157,7 @@ Base path: `/api/instructores`
 - `PUT /api/instructores/{id}`
 - `DELETE /api/instructores/{id}`
 
-### 8.2 ms-gestion-alumno
+### 8.2 ms-istana-gestion-alumno
 
 Base path: `/api/alumnos`
 
@@ -167,7 +167,7 @@ Base path: `/api/alumnos`
 - `PUT /api/alumnos/{id}`
 - `DELETE /api/alumnos/{id}`
 
-### 8.3 ms-gestion-taller
+### 8.3 ms-istana-gestion-taller
 
 Base path: `/api/talleres`
 
@@ -253,10 +253,10 @@ Perfiles: `dev`, `test`, `prod`.
 
 Repositorio de configuraciones centralizadas (se definira en Fase 1):
 
-- `ms-gestion-instructor-dev.yml`
-- `ms-gestion-alumno-dev.yml`
-- `ms-gestion-taller-dev.yml`
-- `ms-admin-api-gateway-dev.yml`
+- `ms-istana-gestion-instructor-dev.yml`
+- `ms-istana-gestion-alumno-dev.yml`
+- `ms-istana-gestion-taller-dev.yml`
+- `ms-istana-api-gateway-dev.yml`
 
 Buenas practicas:
 
@@ -268,12 +268,12 @@ Buenas practicas:
 
 ## 12) Orden de inicio local (runtime)
 
-1. `ms-admin-config-server`
-2. `ms-admin-registry-server`
-3. `ms-admin-api-gateway`
-4. `ms-gestion-instructor`
-5. `ms-gestion-alumno`
-6. `ms-gestion-taller`
+1. `ms-istana-config-server`
+2. `ms-istana-registry-server`
+3. `ms-istana-api-gateway`
+4. `ms-istana-gestion-instructor`
+5. `ms-istana-gestion-alumno`
+6. `ms-istana-gestion-taller`
 
 ---
 
@@ -306,4 +306,4 @@ Cada microservicio tendra:
 
 ## 15) Siguiente paso inmediato
 
-Ejecutar Fase 1: implementar `ms-admin-config-server` con repositorio de configuraciones y perfil `dev`.
+Ejecutar Fase 1: implementar `ms-istana-config-server` con repositorio de configuraciones y perfil `dev`.

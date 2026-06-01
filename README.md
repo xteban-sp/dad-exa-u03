@@ -8,13 +8,13 @@ resiliencia, balanceo y consistencia distribuida. Despliegue reproducible con Do
 
 | Servicio | Puerto | Rol |
 |----------|--------|-----|
-| ms-admin-config-server | 8888 | Configuración centralizada (Spring Cloud Config) |
-| ms-admin-registry-server | 8761 | Registro y descubrimiento (Eureka) |
-| ms-admin-api-gateway | 8080 | Puerta de enlace + seguridad JWT + CORS |
-| ms-auth | 8084 | Autenticación, usuarios y emisión de JWT |
-| ms-gestion-instructor | 8081 | CRUD de instructores |
-| ms-gestion-alumno | 8082 | CRUD de alumnos |
-| ms-gestion-taller | 8083 | Talleres + composición (Feign) + Saga |
+| ms-istana-config-server | 8888 | Configuración centralizada (Spring Cloud Config) |
+| ms-istana-registry-server | 8761 | Registro y descubrimiento (Eureka) |
+| ms-istana-api-gateway | 8080 | Puerta de enlace + seguridad JWT + CORS |
+| ms-istana-auth | 8084 | Autenticación, usuarios y emisión de JWT |
+| ms-istana-gestion-instructor | 8081 | CRUD de instructores |
+| ms-istana-gestion-alumno | 8082 | CRUD de alumnos |
+| ms-istana-gestion-taller | 8083 | Talleres + composición (Feign) + Saga |
 
 Bases de datos: `instructordb` (5433), `alumnodb` (5434), `tallerdb` (5435), `authdb` (5436).
 
@@ -62,20 +62,20 @@ Para detener: `docker compose down` (agrega `-v` para borrar también los datos)
    ```
 2. Importa cada módulo (`pom.xml`) en IntelliJ.
 3. Arranca en este **orden** (cada uno como Spring Boot app):
-   1. ms-admin-config-server (8888)
-   2. ms-admin-registry-server (8761)
-   3. ms-auth (8084)
-   4. ms-gestion-instructor (8081)
-   5. ms-gestion-alumno (8082)
-   6. ms-gestion-taller (8083)
-   7. ms-admin-api-gateway (8080)
+   1. ms-istana-config-server (8888)
+   2. ms-istana-registry-server (8761)
+   3. ms-istana-auth (8084)
+   4. ms-istana-gestion-instructor (8081)
+   5. ms-istana-gestion-alumno (8082)
+   6. ms-istana-gestion-taller (8083)
+   7. ms-istana-api-gateway (8080)
 
 > En local los servicios se registran por IP loopback (127.0.0.1). En Docker se usa el
 > nombre del contenedor (override por variables de entorno en `docker-compose.yml`).
 
 ---
 
-## Usuarios de prueba (sembrados por ms-auth)
+## Usuarios de prueba (sembrados por ms-istana-auth)
 
 | Usuario | Password | Rol |
 |---------|----------|-----|
@@ -108,7 +108,7 @@ Endpoints principales:
 
 ## Perfiles de configuración
 El sistema usa el perfil `dev`. La configuración está centralizada en el Config Server
-(`ms-admin-config-server/src/main/resources/config-repo/`). Para `test`/`prod` se replican
+(`ms-istana-config-server/src/main/resources/config-repo/`). Para `test`/`prod` se replican
 los archivos `ms-<servicio>-<perfil>.yml` cambiando datasource y parámetros por entorno
 (pendiente como mejora; en producción se recomienda externalizar credenciales y usar
 migraciones Flyway/Liquibase en lugar de `ddl-auto: update`).

@@ -11,10 +11,10 @@ graph TD
         CFG["config-server<br/>:8888"]
         REG["registry-server (Eureka)<br/>:8761"]
         GW["api-gateway<br/>:8080 (JWT + CORS)"]
-        AUTH["ms-auth<br/>:8084"]
-        INS["ms-gestion-instructor<br/>:8081"]
-        ALU["ms-gestion-alumno<br/>:8082"]
-        TAL["ms-gestion-taller<br/>:8083"]
+        AUTH["ms-istana-auth<br/>:8084"]
+        INS["ms-istana-gestion-instructor<br/>:8081"]
+        ALU["ms-istana-gestion-alumno<br/>:8082"]
+        TAL["ms-istana-gestion-taller<br/>:8083"]
 
         PGI[("pg-instructor<br/>:5433")]
         PGA[("pg-alumno<br/>:5434")]
@@ -64,10 +64,10 @@ graph TD
 - Dentro de la red de Docker los servicios se resuelven por **nombre de contenedor**
   (override por variables de entorno), no por `localhost`.
 - Escalado/balanceo: se pueden levantar múltiples instancias de un microservicio
-  (`docker compose up --scale ms-gestion-instructor=2`) y el Gateway/Feign reparten con
+  (`docker compose up --scale ms-istana-gestion-instructor=2`) y el Gateway/Feign reparten con
   Spring Cloud LoadBalancer.
 
 ## Orden de arranque
 ```
-pg-* (bases)  ->  config-server  ->  registry-server  ->  ms-auth / instructor / alumno / taller  ->  api-gateway
+pg-* (bases)  ->  config-server  ->  registry-server  ->  ms-istana-auth / instructor / alumno / taller  ->  api-gateway
 ```

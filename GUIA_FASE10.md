@@ -21,7 +21,7 @@ Pasos orquestados por el taller:
 
 ## 1) Preparación
 - **Rebuild Project** + reinicia **Config Server**.
-- **Reload Maven** en alumno, taller y gateway. Reinícialos (y ms-auth/instructor).
+- **Reload Maven** en alumno, taller y gateway. Reinícialos (y ms-istana-auth/instructor).
 - El servicio alumno añadió la columna `talleresInscritos` (se crea sola con ddl-auto).
 
 ## 2) Caso A — Matrícula exitosa (carpeta "Fase 10")

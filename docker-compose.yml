@@ -63,13 +63,13 @@ services:
 
   # ---------------- Infraestructura ----------------
   config-server:
-    build: ./ms-admin-config-server
+    build: ./ms-istana-config-server
     container_name: config-server
     ports: ["8888:8888"]
     networks: [microservices-net]
 
   registry-server:
-    build: ./ms-admin-registry-server
+    build: ./ms-istana-registry-server
     container_name: registry-server
     ports: ["8761:8761"]
     environment:
@@ -81,7 +81,7 @@ services:
     networks: [microservices-net]
 
   api-gateway:
-    build: ./ms-admin-api-gateway
+    build: ./ms-istana-api-gateway
     container_name: api-gateway
     ports: ["8080:8080"]
     environment:
@@ -94,15 +94,15 @@ services:
     networks: [microservices-net]
 
   # ---------------- Microservicios de negocio ----------------
-  ms-auth:
-    build: ./ms-auth
-    container_name: ms-auth
+  ms-istana-auth:
+    build: ./ms-istana-auth
+    container_name: ms-istana-auth
     ports: ["8084:8084"]
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
-      EUREKA_INSTANCE_HOSTNAME: ms-auth
+      EUREKA_INSTANCE_HOSTNAME: ms-istana-auth
       SPRING_DATASOURCE_URL: jdbc:postgresql://pg-auth:5432/authdb
     depends_on:
       config-server: { condition: service_started }
@@ -111,15 +111,15 @@ services:
     restart: on-failure
     networks: [microservices-net]
 
-  ms-gestion-instructor:
-    build: ./ms-gestion-instructor
-    container_name: ms-gestion-instructor
+  ms-istana-gestion-instructor:
+    build: ./ms-istana-gestion-instructor
+    container_name: ms-istana-gestion-instructor
     ports: ["8081:8081"]
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
-      EUREKA_INSTANCE_HOSTNAME: ms-gestion-instructor
+      EUREKA_INSTANCE_HOSTNAME: ms-istana-gestion-instructor
       SPRING_DATASOURCE_URL: jdbc:postgresql://pg-instructor:5432/instructordb
     depends_on:
       config-server: { condition: service_started }
@@ -128,15 +128,15 @@ services:
     restart: on-failure
     networks: [microservices-net]
 
-  ms-gestion-alumno:
-    build: ./ms-gestion-alumno
-    container_name: ms-gestion-alumno
+  ms-istana-gestion-alumno:
+    build: ./ms-istana-gestion-alumno
+    container_name: ms-istana-gestion-alumno
     ports: ["8082:8082"]
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
-      EUREKA_INSTANCE_HOSTNAME: ms-gestion-alumno
+      EUREKA_INSTANCE_HOSTNAME: ms-istana-gestion-alumno
       SPRING_DATASOURCE_URL: jdbc:postgresql://pg-alumno:5432/alumnodb
     depends_on:
       config-server: { condition: service_started }
@@ -145,15 +145,15 @@ services:
     restart: on-failure
     networks: [microservices-net]
 
-  ms-gestion-taller:
-    build: ./ms-gestion-taller
-    container_name: ms-gestion-taller
+  ms-istana-gestion-taller:
+    build: ./ms-istana-gestion-taller
+    container_name: ms-istana-gestion-taller
     ports: ["8083:8083"]
     environment:
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
-      EUREKA_INSTANCE_HOSTNAME: ms-gestion-taller
+      EUREKA_INSTANCE_HOSTNAME: ms-istana-gestion-taller
       SPRING_DATASOURCE_URL: jdbc:postgresql://pg-taller:5432/tallerdb
     depends_on:
       config-server: { condition: service_started }

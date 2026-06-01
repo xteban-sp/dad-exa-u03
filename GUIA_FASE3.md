@@ -16,11 +16,11 @@ docker run -d --name pg-taller     -e POSTGRES_DB=tallerdb     -e POSTGRES_PASSW
 
 ## 2) Orden de arranque (en IntelliJ, Run de cada Application)
 
-1. `ms-admin-config-server`  → http://localhost:8888
-2. `ms-admin-registry-server` → http://localhost:8761 (Eureka dashboard)
-3. `ms-gestion-instructor`   → :8081
-4. `ms-gestion-alumno`       → :8082
-5. `ms-gestion-taller`       → :8083
+1. `ms-istana-config-server`  → http://localhost:8888
+2. `ms-istana-registry-server` → http://localhost:8761 (Eureka dashboard)
+3. `ms-istana-gestion-instructor`   → :8081
+4. `ms-istana-gestion-alumno`       → :8082
+5. `ms-istana-gestion-taller`       → :8083
 
 Verifica en el dashboard de Eureka (`:8761`) que aparezcan los 3 servicios `UP`.
 

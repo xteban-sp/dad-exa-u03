@@ -3,7 +3,7 @@
 ## ¿Qué se logró?
 El **API Gateway** ahora es el **guardián centralizado**: un filtro global
 (`AuthenticationGlobalFilter`) intercepta TODA petición, valida el JWT (con el mismo
-secreto que `ms-auth`) y aplica **autorización por rol**. Además inyecta cabeceras
+secreto que `ms-istana-auth`) y aplica **autorización por rol**. Además inyecta cabeceras
 `X-Auth-User` y `X-Auth-Rol` hacia los microservicios.
 
 ### Política aplicada
@@ -18,12 +18,12 @@ secreto que `ms-auth`) y aplica **autorización por rol**. Además inyecta cabec
 
 ## 1) Preparación
 - **Rebuild Project** y reinicia el **Config Server** (cambió la config del gateway: ahora
-  trae `jwt.secret`). Verifica en `http://localhost:8888/ms-admin-api-gateway/dev` que
-  aparezca `jwt.secret` **idéntico** al de `ms-auth`.
+  trae `jwt.secret`). Verifica en `http://localhost:8888/ms-istana-api-gateway/dev` que
+  aparezca `jwt.secret` **idéntico** al de `ms-istana-auth`.
 - **Reload Maven** en el gateway (dependencia jjwt nueva) y reinícialo.
-- Ten arriba: Config, Eureka, ms-auth, instructor, alumno, taller, gateway.
+- Ten arriba: Config, Eureka, ms-istana-auth, instructor, alumno, taller, gateway.
 
-> Importante: el `jwt.secret` del gateway y el de ms-auth deben ser EXACTAMENTE iguales,
+> Importante: el `jwt.secret` del gateway y el de ms-istana-auth deben ser EXACTAMENTE iguales,
 > o la validación fallará (401 en todo).
 
 ## 2) Pruebas (carpeta "Fase 9" en Postman)

@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: ms-istana-gestion-taller
+  main:
+    # Evita el error de "FeignClientSpecification ya definido" si el IDE
+    # escanea las clases dos veces (modulos/clases stale tras el rename).
+    allow-bean-definition-overriding: true
+  profiles:
+    active: dev
+  config:
+    import: configserver:http://localhost:8888
+  cloud:
+    config:
+      fail-fast: true

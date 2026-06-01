@@ -8,14 +8,14 @@ Si un microservicio dependiente (instructor o alumno) falla o se cae:
   (deja de esperar timeouts → respuestas rápidas).
 - Pasado un tiempo, pasa a **HALF_OPEN** y se recupera solo si el servicio vuelve.
 
-Parámetros configurados (en `ms-gestion-taller-dev.yml`):
+Parámetros configurados (en `ms-istana-gestion-taller-dev.yml`):
 ventana de 6 llamadas, mínimo 4, umbral de fallo 50%, 10s abierto, auto half-open.
 Los 404 reales **no** cuentan como fallo (solo caídas/timeouts).
 
 ## 1) Preparación
 - **Reload Maven** en el taller (dependencia nueva `resilience4j`).
 - **Reinicia el Config Server** (cambió la config del taller).
-  Verifica: `http://localhost:8888/ms-gestion-taller/dev` debe incluir el bloque `resilience4j`.
+  Verifica: `http://localhost:8888/ms-istana-gestion-taller/dev` debe incluir el bloque `resilience4j`.
 - Arranca todo en orden (config → eureka → instructor → alumno → taller → gateway).
 
 ## 2) Estado base (todo arriba)
@@ -27,7 +27,7 @@ Los 404 reales **no** cuentan como fallo (solo caídas/timeouts).
 ## 3) Demostración del Circuit Breaker (lo importante)
 
 **Paso A — provoca la falla:**
-Detén el microservicio **ms-gestion-instructor** (Stop en IntelliJ).
+Detén el microservicio **ms-istana-gestion-instructor** (Stop en IntelliJ).
 
 **Paso B — llama varias veces (4-6):**
 `GET http://localhost:8080/api/talleres/1/detalle-completo`
@@ -48,10 +48,10 @@ También puedes ver el indicador en:
 ```
 GET http://localhost:8083/actuator/health
 ```
-(busca `circuitBreakers` → `ms-gestion-instructor`).
+(busca `circuitBreakers` → `ms-istana-gestion-instructor`).
 
 **Paso D — recuperación automática:**
-Vuelve a arrancar **ms-gestion-instructor**. Espera ~10s y llama otra vez a
+Vuelve a arrancar **ms-istana-gestion-instructor**. Espera ~10s y llama otra vez a
 `detalle-completo`. El circuito pasa a **HALF_OPEN** y, si responde bien, vuelve a
 **CLOSED**; el detalle muestra de nuevo el instructor real. ✔
 

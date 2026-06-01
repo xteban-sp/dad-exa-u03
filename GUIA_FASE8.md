@@ -1,7 +1,7 @@
 # Guía de verificación — Fase 8 (Seguridad JWT)
 
 ## ¿Qué se logró?
-Se creó el microservicio **`ms-auth`** (puerto 8084) que:
+Se creó el microservicio **`ms-istana-auth`** (puerto 8084) que:
 - Gestiona usuarios con **roles** (`ADMIN`, `INSTRUCTOR`, `ALUMNO`).
 - Guarda las contraseñas cifradas con **BCrypt**.
 - **Emite un JWT** firmado (HS256) en el login.
@@ -18,12 +18,12 @@ docker run -d --name pg-auth -e POSTGRES_DB=authdb -e POSTGRES_PASSWORD=postgres
 
 ## 2) Importar y arrancar
 - **Rebuild Project** (config nueva en el Config Server) y reinicia el **Config Server**.
-  Verifica: `http://localhost:8888/ms-auth/dev` muestra `jwt.secret`, `server.port: 8084`.
-- Importa el módulo `ms-auth/pom.xml` en IntelliJ (Add as Maven Project).
-- Arranca en orden: Config → Eureka → ms-auth → (instructor/alumno/taller) → Gateway.
-- En Eureka debe aparecer **MS-AUTH**.
+  Verifica: `http://localhost:8888/ms-istana-auth/dev` muestra `jwt.secret`, `server.port: 8084`.
+- Importa el módulo `ms-istana-auth/pom.xml` en IntelliJ (Add as Maven Project).
+- Arranca en orden: Config → Eureka → ms-istana-auth → (instructor/alumno/taller) → Gateway.
+- En Eureka debe aparecer **MS-ISTANA-AUTH**.
 
-Al arrancar, `ms-auth` siembra 3 usuarios de prueba:
+Al arrancar, `ms-istana-auth` siembra 3 usuarios de prueba:
 
 | Usuario      | Password    | Rol        |
 |--------------|-------------|------------|
@@ -71,7 +71,7 @@ Pega el `token` en https://jwt.io y verás el payload: `sub` (username), `rol`, 
 La firma se valida con el secreto compartido (`jwt.secret`).
 
 ## 6) Checklist de aceptación Fase 8
-- [ ] `ms-auth` aparece UP en Eureka y accesible vía Gateway (`/api/auth/**`).
+- [ ] `ms-istana-auth` aparece UP en Eureka y accesible vía Gateway (`/api/auth/**`).
 - [ ] `login` con credenciales válidas devuelve un JWT.
 - [ ] Las contraseñas se guardan cifradas (mira la tabla `usuarios`: el hash BCrypt).
 - [ ] `validate` devuelve username y rol del token.

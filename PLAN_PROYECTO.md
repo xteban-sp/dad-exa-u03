@@ -38,7 +38,7 @@ No se mezcla más de una fase a la vez para que sea reproducible y verificable (
 |---|---|---|---|
 | U2-S1 | Resiliencia (Circuit Breaker, tolerancia a fallos) | Fase 6 — Resilience4j | ✅ HECHO |
 | U2-S2 | Balanceo de carga (múltiples instancias) | Fase 7 — Load Balancer | ✅ HECHO |
-| U2-S3 | Seguridad JWT | Fase 8 — Autenticación JWT (ms-auth) | ✅ HECHO |
+| U2-S3 | Seguridad JWT | Fase 8 — Autenticación JWT (ms-istana-auth) | ✅ HECHO |
 | U2-S4 | Políticas y filtros de seguridad | Fase 9 — Autorización en Gateway | ✅ HECHO |
 | U2-S5 | Patrones de consistencia de datos | Fase 10 — Consistencia distribuida (Saga) | ✅ HECHO |
 | U2-S6 | **Evaluación Parcial 2** (01/06) | Checkpoint U2 | ⬜ |
@@ -55,7 +55,7 @@ No se mezcla más de una fase a la vez para que sea reproducible y verificable (
 ## Detalle de cada fase pendiente
 
 ### Fase 3 — Microservicios REST por capas (U1-S1)  ← SIGUIENTE
-Construir `ms-gestion-instructor`, `ms-gestion-alumno` y `ms-gestion-taller` (base) con:
+Construir `ms-istana-gestion-instructor`, `ms-istana-gestion-alumno` y `ms-istana-gestion-taller` (base) con:
 - Estructura por capas completa (controller, service, repository, entity, dto, mapper, exception, config).
 - CRUD REST para cada dominio (rutas del blueprint).
 - Validaciones con `@Valid` / Bean Validation.
@@ -73,7 +73,7 @@ Construir `ms-gestion-instructor`, `ms-gestion-alumno` y `ms-gestion-taller` (ba
 **Verificación:** acceder a los 3 servicios pasando solo por `:8080`.
 
 ### Fase 5 — Comunicación entre microservicios (U1-S5)
-- `OpenFeign` en `ms-gestion-taller` hacia instructor y alumno.
+- `OpenFeign` en `ms-istana-gestion-taller` hacia instructor y alumno.
 - Endpoints compuestos: asignar-instructor, inscribir-alumno, detalle-completo.
 - Fundamentos de seguridad (preparación para U2).
 
@@ -127,9 +127,9 @@ Construir `ms-gestion-instructor`, `ms-gestion-alumno` y `ms-gestion-taller` (ba
 ---
 
 ## Orden de arranque local (runtime)
-1. ms-admin-config-server (8888)
-2. ms-admin-registry-server (8761)
-3. ms-admin-api-gateway (8080)
-4. ms-gestion-instructor (8081)
-5. ms-gestion-alumno (8082)
-6. ms-gestion-taller (8083)
+1. ms-istana-config-server (8888)
+2. ms-istana-registry-server (8761)
+3. ms-istana-api-gateway (8080)
+4. ms-istana-gestion-instructor (8081)
+5. ms-istana-gestion-alumno (8082)
+6. ms-istana-gestion-taller (8083)

@@ -1,0 +1,66 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ms-istana-api-gateway
+  cloud:
+    gateway:
+      # Descubrimiento automatico de servicios registrados en Eureka
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      # Rutas explicitas hacia cada microservicio (resueltas por Eureka con lb://)
+      routes:
+        - id: ms-istana-auth
+          uri: lb://ms-istana-auth
+          predicates:
+            - Path=/api/auth/**
+        - id: ms-istana-gestion-instructor
+          uri: lb://ms-istana-gestion-instructor
+          predicates:
+            - Path=/api/instructores/**
+        - id: ms-istana-gestion-alumno
+          uri: lb://ms-istana-gestion-alumno
+          predicates:
+            - Path=/api/alumnos/**
+        - id: ms-istana-gestion-taller
+          uri: lb://ms-istana-gestion-taller
+          predicates:
+            - Path=/api/talleres/**
+      # CORS centralizado para el cliente web (Unidad 3)
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: "*"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowed-headers: "*"
+            allow-credentials: true
+
+# Secreto JWT: DEBE ser identico al de ms-istana-auth (el gateway valida lo que auth firma)
+jwt:
+  secret: dad-upeu-microservicios-jwt-secret-key-2026-super-segura-0123456789
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: localhost:${spring.application.name}:${server.port}
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    gateway:
+      enabled: true   # habilita /actuator/gateway/routes (off por defecto)
