@@ -9,6 +9,7 @@ public class AlumnoResponse {
     private String email;
     private Integer ciclo;
     private Boolean estado;
+    private Integer talleresInscritos;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -30,4 +31,7 @@ public class AlumnoResponse {
 
     public Boolean getEstado() { return estado; }
     public void setEstado(Boolean estado) { this.estado = estado; }
+
+    public Integer getTalleresInscritos() { return talleresInscritos; }
+    public void setTalleresInscritos(Integer talleresInscritos) { this.talleresInscritos = talleresInscritos; }
 }

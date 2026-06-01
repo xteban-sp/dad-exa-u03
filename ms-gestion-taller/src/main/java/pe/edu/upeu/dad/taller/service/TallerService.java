@@ -17,4 +17,7 @@ public interface TallerService {
     TallerResponse asignarInstructor(Long idTaller, Long idInstructor);
     TallerDetalleResponse inscribirAlumno(Long idTaller, Long idAlumno);
     TallerDetalleResponse obtenerDetalleCompleto(Long idTaller);
+
+    // Saga de matricula (consistencia distribuida con compensacion)
+    TallerDetalleResponse matricularAlumno(Long idTaller, Long idAlumno);
 }

@@ -96,9 +96,10 @@ public class AuthenticationGlobalFilter implements GlobalFilter, Ordered {
         if (method == HttpMethod.GET) {
             return true;
         }
-        // Inscribir alumno en taller: permitido a ALUMNO
+        // Inscribir / matricular alumno en taller: permitido a ALUMNO
         if (method == HttpMethod.POST
-                && path.matches("/api/talleres/\\d+/inscribir-alumno/\\d+")) {
+                && (path.matches("/api/talleres/\\d+/inscribir-alumno/\\d+")
+                || path.matches("/api/talleres/\\d+/matricular-alumno/\\d+"))) {
             return "ALUMNO".equals(rol);
         }
         // Cualquier otra escritura: solo ADMIN (ya retorno true arriba)

@@ -629,6 +629,63 @@
           }
         }
       ]
+    },
+    {
+      "name": "Fase 10 - Saga de matricula",
+      "item": [
+        {
+          "name": "Matricular alumno (Saga) - exito",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtAlumno}}" }],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/talleres/{{tallerId}}/matricular-alumno/{{alumnoId}}",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "talleres", "{{tallerId}}", "matricular-alumno", "{{alumnoId}}"]
+            },
+            "description": "Saga: incrementa contador del alumno (remoto) + crea inscripcion (local)."
+          }
+        },
+        {
+          "name": "Ver contador del alumno (talleresInscritos)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtAlumno}}" }],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/alumnos/{{alumnoId}}",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "alumnos", "{{alumnoId}}"]
+            },
+            "description": "Mira 'talleresInscritos'. Tras una matricula exitosa sube; tras una compensada NO cambia."
+          }
+        },
+        {
+          "name": "Crear taller lleno (cupo=1) como ADMIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"codigo\": \"TALL-LLENO\",\n  \"nombre\": \"Taller con un solo cupo\",\n  \"descripcion\": \"Para demostrar la compensacion de la Saga\",\n  \"cupoMaximo\": 1\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/talleres",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "talleres"]
+            },
+            "description": "Crea un taller con cupo 1. Anota su id para la prueba de compensacion (ver guia)."
+          }
+        }
+      ]
     }
   ]
 }

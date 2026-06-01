@@ -28,6 +28,11 @@ public class Alumno {
     @Column(nullable = false)
     private Boolean estado = true;
 
+    // Cantidad de talleres en los que esta matriculado (usado por la Saga de matricula)
+    // columnDefinition con default 0 para que el ALTER funcione aunque ya existan filas.
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer talleresInscritos = 0;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -48,4 +53,7 @@ public class Alumno {
 
     public Boolean getEstado() { return estado; }
     public void setEstado(Boolean estado) { this.estado = estado; }
+
+    public Integer getTalleresInscritos() { return talleresInscritos; }
+    public void setTalleresInscritos(Integer talleresInscritos) { this.talleresInscritos = talleresInscritos; }
 }

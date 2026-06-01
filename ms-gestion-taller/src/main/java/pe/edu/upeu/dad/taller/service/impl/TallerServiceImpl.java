@@ -1,6 +1,8 @@
 package pe.edu.upeu.dad.taller.service.impl;
 
 import feign.FeignException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.upeu.dad.taller.client.AlumnoClient;
@@ -24,6 +26,8 @@ import java.util.List;
 
 @Service
 public class TallerServiceImpl implements TallerService {
+
+    private static final Logger log = LoggerFactory.getLogger(TallerServiceImpl.class);
 
     private final TallerRepository repository;
     private final InscripcionRepository inscripcionRepository;
@@ -126,6 +130,56 @@ public class TallerServiceImpl implements TallerService {
     @Transactional(readOnly = true)
     public TallerDetalleResponse obtenerDetalleCompleto(Long idTaller) {
         return construirDetalle(buscarTaller(idTaller));
+    }
+
+    // ---------- Saga de matricula (orquestacion + compensacion) ----------
+    // NOTA: este metodo NO es @Transactional a proposito. Cada paso confirma su
+    // propia transaccion (en su propia BD), por eso si un paso falla se necesita
+    // una COMPENSACION explicita (no basta con un rollback ACID).
+    @Override
+    public TallerDetalleResponse matricularAlumno(Long idTaller, Long idAlumno) {
+        Taller taller = buscarTaller(idTaller);
+
+        // Validaciones previas (lectura)
+        AlumnoDto alumno = obtenerAlumno(idAlumno);
+        if (alumno == null) {
+            throw new ResourceNotFoundException("Alumno no encontrado con id " + idAlumno);
+        }
+        if (inscripcionRepository.existsByTallerIdAndAlumnoId(idTaller, idAlumno)) {
+            throw new BusinessException("El alumno " + idAlumno + " ya esta matriculado en el taller " + idTaller);
+        }
+
+        // === PASO 1 (remoto): incrementar el contador de talleres del alumno ===
+        // Si el alumno alcanzo su maximo, este paso lanza excepcion y la Saga aborta
+        // sin haber tocado nada local (no hay que compensar).
+        log.info("[SAGA] Inicio matricula taller={} alumno={}", idTaller, idAlumno);
+        alumnoClient.incrementarTaller(idAlumno);
+        log.info("[SAGA] Paso 1 OK: contador del alumno {} incrementado", idAlumno);
+
+        // === PASO 2 (local): crear la inscripcion validando cupo ===
+        try {
+            long inscritos = inscripcionRepository.countByTallerId(idTaller);
+            if (inscritos >= taller.getCupoMaximo()) {
+                throw new BusinessException("El taller " + idTaller + " no tiene cupo disponible");
+            }
+            Inscripcion inscripcion = new Inscripcion();
+            inscripcion.setTallerId(idTaller);
+            inscripcion.setAlumnoId(idAlumno);
+            inscripcionRepository.save(inscripcion);
+            log.info("[SAGA] Paso 2 OK: inscripcion creada. Matricula completada.");
+        } catch (RuntimeException e) {
+            // === COMPENSACION: deshacer el Paso 1 remoto ===
+            log.warn("[SAGA] Paso 2 FALLO ({}). Compensando Paso 1...", e.getMessage());
+            try {
+                alumnoClient.decrementarTaller(idAlumno);
+                log.info("[SAGA] Compensacion OK: contador del alumno {} revertido", idAlumno);
+            } catch (RuntimeException ce) {
+                log.error("[SAGA] Compensacion FALLO para alumno {}: {}", idAlumno, ce.getMessage());
+            }
+            throw new BusinessException("Matricula revertida (Saga): " + e.getMessage());
+        }
+
+        return construirDetalle(taller);
     }
 
     // ---------- Helpers ----------

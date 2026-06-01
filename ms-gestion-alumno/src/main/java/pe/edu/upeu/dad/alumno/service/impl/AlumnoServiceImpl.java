@@ -68,4 +68,29 @@ public class AlumnoServiceImpl implements AlumnoService {
         }
         repository.deleteById(id);
     }
+
+    private static final int MAX_TALLERES = 3;
+
+    @Override
+    @Transactional
+    public AlumnoResponse incrementarTaller(Long id) {
+        Alumno e = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Alumno no encontrado con id " + id));
+        int actual = e.getTalleresInscritos() == null ? 0 : e.getTalleresInscritos();
+        if (actual >= MAX_TALLERES) {
+            throw new BusinessException("El alumno " + id + " ya alcanzo el maximo de " + MAX_TALLERES + " talleres");
+        }
+        e.setTalleresInscritos(actual + 1);
+        return mapper.toResponse(repository.save(e));
+    }
+
+    @Override
+    @Transactional
+    public AlumnoResponse decrementarTaller(Long id) {
+        Alumno e = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Alumno no encontrado con id " + id));
+        int actual = e.getTalleresInscritos() == null ? 0 : e.getTalleresInscritos();
+        e.setTalleresInscritos(Math.max(0, actual - 1));
+        return mapper.toResponse(repository.save(e));
+    }
 }

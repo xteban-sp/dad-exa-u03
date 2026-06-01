@@ -40,7 +40,7 @@ No se mezcla más de una fase a la vez para que sea reproducible y verificable (
 | U2-S2 | Balanceo de carga (múltiples instancias) | Fase 7 — Load Balancer | ✅ HECHO |
 | U2-S3 | Seguridad JWT | Fase 8 — Autenticación JWT (ms-auth) | ✅ HECHO |
 | U2-S4 | Políticas y filtros de seguridad | Fase 9 — Autorización en Gateway | ✅ HECHO |
-| U2-S5 | Patrones de consistencia de datos | Fase 10 — Consistencia distribuida (Saga) | ⬜ Pendiente |
+| U2-S5 | Patrones de consistencia de datos | Fase 10 — Consistencia distribuida (Saga) | ✅ HECHO |
 | U2-S6 | **Evaluación Parcial 2** (01/06) | Checkpoint U2 | ⬜ |
 
 ### Transversales (imagen + descripción del producto)

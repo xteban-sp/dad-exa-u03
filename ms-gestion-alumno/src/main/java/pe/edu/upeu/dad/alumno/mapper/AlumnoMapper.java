@@ -37,6 +37,7 @@ public class AlumnoMapper {
         r.setEmail(e.getEmail());
         r.setCiclo(e.getCiclo());
         r.setEstado(e.getEstado());
+        r.setTalleresInscritos(e.getTalleresInscritos());
         return r;
     }
 }

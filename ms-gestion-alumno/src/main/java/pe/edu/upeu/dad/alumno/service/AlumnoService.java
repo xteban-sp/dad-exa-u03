@@ -11,4 +11,8 @@ public interface AlumnoService {
     AlumnoResponse crear(AlumnoRequest request);
     AlumnoResponse actualizar(Long id, AlumnoRequest request);
     void eliminar(Long id);
+
+    // Operaciones para la Saga de matricula (consistencia distribuida)
+    AlumnoResponse incrementarTaller(Long id);
+    AlumnoResponse decrementarTaller(Long id);
 }

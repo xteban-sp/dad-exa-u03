@@ -54,4 +54,18 @@ public class AlumnoController {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
     }
+
+    // --- Operaciones internas para la Saga de matricula (llamadas por ms-gestion-taller) ---
+
+    @Operation(summary = "Incrementar el contador de talleres del alumno (paso de Saga)")
+    @PostMapping("/{id}/incrementar-taller")
+    public ResponseEntity<AlumnoResponse> incrementarTaller(@PathVariable Long id) {
+        return ResponseEntity.ok(service.incrementarTaller(id));
+    }
+
+    @Operation(summary = "Decrementar el contador de talleres del alumno (compensacion de Saga)")
+    @PostMapping("/{id}/decrementar-taller")
+    public ResponseEntity<AlumnoResponse> decrementarTaller(@PathVariable Long id) {
+        return ResponseEntity.ok(service.decrementarTaller(id));
+    }
 }

@@ -1,0 +1,173 @@
+services:
+
+  # ---------------- Bases de datos (una por microservicio) ----------------
+  pg-instructor:
+    image: postgres:16
+    container_name: pg-instructor
+    environment:
+      POSTGRES_DB: instructordb
+      POSTGRES_PASSWORD: postgres
+    ports: ["5433:5432"]
+    volumes: ["pg-instructor-data:/var/lib/postgresql/data"]
+    networks: [microservices-net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  pg-alumno:
+    image: postgres:16
+    container_name: pg-alumno
+    environment:
+      POSTGRES_DB: alumnodb
+      POSTGRES_PASSWORD: postgres
+    ports: ["5434:5432"]
+    volumes: ["pg-alumno-data:/var/lib/postgresql/data"]
+    networks: [microservices-net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  pg-taller:
+    image: postgres:16
+    container_name: pg-taller
+    environment:
+      POSTGRES_DB: tallerdb
+      POSTGRES_PASSWORD: postgres
+    ports: ["5435:5432"]
+    volumes: ["pg-taller-data:/var/lib/postgresql/data"]
+    networks: [microservices-net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  pg-auth:
+    image: postgres:16
+    container_name: pg-auth
+    environment:
+      POSTGRES_DB: authdb
+      POSTGRES_PASSWORD: postgres
+    ports: ["5436:5432"]
+    volumes: ["pg-auth-data:/var/lib/postgresql/data"]
+    networks: [microservices-net]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ---------------- Infraestructura ----------------
+  config-server:
+    build: ./ms-admin-config-server
+    container_name: config-server
+    ports: ["8888:8888"]
+    networks: [microservices-net]
+
+  registry-server:
+    build: ./ms-admin-registry-server
+    container_name: registry-server
+    ports: ["8761:8761"]
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8888
+      EUREKA_INSTANCE_HOSTNAME: registry-server
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
+    depends_on: [config-server]
+    restart: on-failure
+    networks: [microservices-net]
+
+  api-gateway:
+    build: ./ms-admin-api-gateway
+    container_name: api-gateway
+    ports: ["8080:8080"]
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+      EUREKA_INSTANCE_HOSTNAME: api-gateway
+    depends_on: [config-server, registry-server]
+    restart: on-failure
+    networks: [microservices-net]
+
+  # ---------------- Microservicios de negocio ----------------
+  ms-auth:
+    build: ./ms-auth
+    container_name: ms-auth
+    ports: ["8084:8084"]
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+      EUREKA_INSTANCE_HOSTNAME: ms-auth
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pg-auth:5432/authdb
+    depends_on:
+      config-server: { condition: service_started }
+      registry-server: { condition: service_started }
+      pg-auth: { condition: service_healthy }
+    restart: on-failure
+    networks: [microservices-net]
+
+  ms-gestion-instructor:
+    build: ./ms-gestion-instructor
+    container_name: ms-gestion-instructor
+    ports: ["8081:8081"]
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+      EUREKA_INSTANCE_HOSTNAME: ms-gestion-instructor
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pg-instructor:5432/instructordb
+    depends_on:
+      config-server: { condition: service_started }
+      registry-server: { condition: service_started }
+      pg-instructor: { condition: service_healthy }
+    restart: on-failure
+    networks: [microservices-net]
+
+  ms-gestion-alumno:
+    build: ./ms-gestion-alumno
+    container_name: ms-gestion-alumno
+    ports: ["8082:8082"]
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+      EUREKA_INSTANCE_HOSTNAME: ms-gestion-alumno
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pg-alumno:5432/alumnodb
+    depends_on:
+      config-server: { condition: service_started }
+      registry-server: { condition: service_started }
+      pg-alumno: { condition: service_healthy }
+    restart: on-failure
+    networks: [microservices-net]
+
+  ms-gestion-taller:
+    build: ./ms-gestion-taller
+    container_name: ms-gestion-taller
+    ports: ["8083:8083"]
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://registry-server:8761/eureka
+      EUREKA_INSTANCE_PREFER_IP_ADDRESS: "false"
+      EUREKA_INSTANCE_HOSTNAME: ms-gestion-taller
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pg-taller:5432/tallerdb
+    depends_on:
+      config-server: { condition: service_started }
+      registry-server: { condition: service_started }
+      pg-taller: { condition: service_healthy }
+    restart: on-failure
+    networks: [microservices-net]
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  pg-instructor-data:
+  pg-alumno-data:
+  pg-taller-data:
+  pg-auth-data:

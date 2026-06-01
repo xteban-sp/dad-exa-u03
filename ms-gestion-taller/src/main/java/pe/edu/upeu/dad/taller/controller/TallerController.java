@@ -77,4 +77,11 @@ public class TallerController {
     public ResponseEntity<TallerDetalleResponse> detalleCompleto(@PathVariable Long idTaller) {
         return ResponseEntity.ok(service.obtenerDetalleCompleto(idTaller));
     }
+
+    @Operation(summary = "Matricular alumno (Saga: inscripcion local + contador remoto con compensacion)")
+    @PostMapping("/{idTaller}/matricular-alumno/{idAlumno}")
+    public ResponseEntity<TallerDetalleResponse> matricularAlumno(@PathVariable Long idTaller,
+                                                                  @PathVariable Long idAlumno) {
+        return new ResponseEntity<>(service.matricularAlumno(idTaller, idAlumno), HttpStatus.CREATED);
+    }
 }
