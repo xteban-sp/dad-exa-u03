@@ -13,6 +13,10 @@ spring:
           lower-case-service-id: true
       # Rutas explicitas hacia cada microservicio (resueltas por Eureka con lb://)
       routes:
+        - id: ms-auth
+          uri: lb://ms-auth
+          predicates:
+            - Path=/api/auth/**
         - id: ms-gestion-instructor
           uri: lb://ms-gestion-instructor
           predicates:
@@ -38,6 +42,10 @@ spring:
               - OPTIONS
             allowed-headers: "*"
             allow-credentials: true
+
+# Secreto JWT: DEBE ser identico al de ms-auth (el gateway valida lo que auth firma)
+jwt:
+  secret: dad-upeu-microservicios-jwt-secret-key-2026-super-segura-0123456789
 
 eureka:
   instance:

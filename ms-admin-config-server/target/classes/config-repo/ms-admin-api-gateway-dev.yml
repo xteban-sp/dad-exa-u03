@@ -13,6 +13,10 @@ spring:
           lower-case-service-id: true
       # Rutas explicitas hacia cada microservicio (resueltas por Eureka con lb://)
       routes:
+        - id: ms-auth
+          uri: lb://ms-auth
+          predicates:
+            - Path=/api/auth/**
         - id: ms-gestion-instructor
           uri: lb://ms-gestion-instructor
           predicates:

@@ -14,7 +14,9 @@
     { "key": "portTaller", "value": "8083" },
     { "key": "instructorId", "value": "1" },
     { "key": "alumnoId", "value": "1" },
-    { "key": "tallerId", "value": "1" }
+    { "key": "tallerId", "value": "1" },
+    { "key": "jwt", "value": "" },
+    { "key": "jwtAlumno", "value": "" }
   ],
   "item": [
     {
@@ -427,6 +429,203 @@
               "port": "8091",
               "path": ["api", "instructores", "whoami"]
             }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fase 8 - Autenticacion JWT (via Gateway)",
+      "item": [
+        {
+          "name": "Login (admin) - guarda el token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  pm.collectionVariables.set('jwt', data.token);",
+                  "  console.log('Token guardado en {{jwt}}');",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/auth/login",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Devuelve el JWT. El script de test lo guarda en la variable {{jwt}}."
+          }
+        },
+        {
+          "name": "Register (nuevo usuario)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"fernando\",\n  \"password\": \"fernando123\",\n  \"rol\": \"ALUMNO\"\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/auth/register",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Validate (usa el token guardado)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwt}}" }],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/auth/validate",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "auth", "validate"]
+            },
+            "description": "Valida el JWT y devuelve username + rol."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fase 9 - Politicas por rol (via Gateway)",
+      "item": [
+        {
+          "name": "Login alumno1 - guarda jwtAlumno",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  pm.collectionVariables.set('jwtAlumno', pm.response.json().token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"alumno1\",\n  \"password\": \"alum123\"\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/auth/login",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "GET instructores SIN token (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/instructores",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "instructores"]
+            },
+            "description": "Sin Authorization => 401."
+          }
+        },
+        {
+          "name": "GET instructores con token (200)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtAlumno}}" }],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/instructores",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "instructores"]
+            },
+            "description": "Lectura permitida a cualquier rol autenticado => 200."
+          }
+        },
+        {
+          "name": "POST instructor como ALUMNO (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwtAlumno}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dni\": \"72999888\",\n  \"nombres\": \"NoDeberia\",\n  \"apellidos\": \"Crear\",\n  \"especialidad\": \"X\",\n  \"email\": \"no@upeu.edu.pe\"\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/instructores",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "instructores"]
+            },
+            "description": "Escritura con rol ALUMNO => 403 FORBIDDEN."
+          }
+        },
+        {
+          "name": "POST instructor como ADMIN (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{jwt}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dni\": \"73111222\",\n  \"nombres\": \"Creado\",\n  \"apellidos\": \"PorAdmin\",\n  \"especialidad\": \"Cloud\",\n  \"email\": \"admin.creado@upeu.edu.pe\"\n}"
+            },
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/instructores",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "instructores"]
+            },
+            "description": "Requiere primero el login admin (guarda {{jwt}}). Escritura con ADMIN => 201."
+          }
+        },
+        {
+          "name": "Inscribir alumno como ALUMNO (permitido)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{jwtAlumno}}" }],
+            "url": {
+              "raw": "http://{{host}}:{{portGateway}}/api/talleres/{{tallerId}}/inscribir-alumno/{{alumnoId}}",
+              "protocol": "http",
+              "host": ["{{host}}"],
+              "port": "{{portGateway}}",
+              "path": ["api", "talleres", "{{tallerId}}", "inscribir-alumno", "{{alumnoId}}"]
+            },
+            "description": "El rol ALUMNO si puede inscribirse => 201."
           }
         }
       ]
