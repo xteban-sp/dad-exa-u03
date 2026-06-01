@@ -1,0 +1,12 @@
+# Config de TEST: no contacta Config Server ni Eureka (tests aislados)
+spring:
+  config:
+    import: "optional:configserver:"
+  cloud:
+    config:
+      enabled: false
+eureka:
+  client:
+    enabled: false
+    register-with-eureka: false
+    fetch-registry: false
