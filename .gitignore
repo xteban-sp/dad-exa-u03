@@ -1,0 +1,12 @@
+# Build output
+**/target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# Archivos temporales
+_synctest.json
